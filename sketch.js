@@ -22,11 +22,27 @@ const noteRadius = 160;
 let countdown;
 let timer;
 
+// Classifier Variable
+let classifier;
+
+// Model URL
+let imageModelURL = 'https://teachablemachine.withgoogle.com/models/M2Z0uvmy7/';
+
+// Video
+let video;
+let flippedVideo;
+
+// To store the classification
+let label = "";
+
+
+
 /*TITLE SCREEN*/
 // Start menu
 let startButton;
 
 function preload() {
+    classifier = ml5.imageClassifier(imageModelURL + 'model.json');
     sound = new Howl({
         src: ['./margot.mp3'],
         onend: function () { isPlaying = false; }
@@ -55,14 +71,33 @@ function setup() {
     timer = createDiv('');
     // timer.style('font-size', '64px');
     timer.position(width / 2, height / 2);
+
+    // Create the video
+    video = createCapture(VIDEO);
+    video.size(320, 240);
+    video.hide();
+
+    flippedVideo = ml5.flipImage(video)
+    // Start classifying
+    classifyVideo();
 }
 
 function draw() {
     if (isPlaying) {
         background(220);
 
+        // Draw the video
+        image(flippedVideo, 0, 0);
+
+        // Draw the label
+        fill(0);
+        textSize(16);
+        textAlign(CENTER);
+        text(label, width / 2, height - 4);
+
         /*GAME*/
         // Box
+        fill(255);
         square(boxCenter.x, boxCenter.y, boxRadius);
 
         if (conductor !== undefined) {
@@ -114,6 +149,25 @@ let startCountdown = () => {
     }, 1000 / 3);
 }
 
+// Get a prediction for the current video frame
+function classifyVideo() {
+    flippedVideo = ml5.flipImage(video)
+    classifier.classify(flippedVideo, gotResult);
+}
+
+// When we get a result
+function gotResult(error, results) {
+    // If there is an error
+    if (error) {
+        console.error(error);
+        return;
+    }
+    // The results are in an array ordered by confidence.
+    // console.log(results[0]);
+    label = results[0].label;
+    // Classifiy again!
+    classifyVideo();
+}
 
 //quand label == ce qu'on veut → incrémenter un counter
 //quand counter > counterthreshold → prendre en compte l'input + reset counter
