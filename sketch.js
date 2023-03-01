@@ -136,8 +136,6 @@ function draw() {
             setActiveNote();
         }
     }
-
-    // console.log(frameRate());
 }
 
 let start = () => {
@@ -161,29 +159,9 @@ let start = () => {
 
 
 let setActiveNote = () => {
-    notes.forEach(note => {
-        // if (note.position.x > boxCenter.x + boxRadius / 2 + note.radius / 2) {
-        //     notes.shift();
-        // }
-
-
-        // if (notes[notes.indexOf(note) + 1] == undefined) {
-        //     console.log('return');
-        //     return;
-        // } else {
-        //     console.log('pas return');
-        // }
-        // if (note.position.x < boxCenter.x + boxRadius / 2 + note.radius / 2
-        //     && notes.indexOf(note) < notes.indexOf()
-        // ) {
-        //     activeNote = note;
-        // }
-
-
-        if (activeNote.position.x > boxCenter.x + boxRadius / 2 + noteRadius / 2) {
-            activeNote = notes[notes.indexOf(activeNote) + 1];
-        }
-    });
+    if (activeNote.position.x > boxCenter.x + boxRadius / 2 + noteRadius / 2) {
+        activeNote = notes[notes.indexOf(activeNote) + 1];
+    }
 }
 
 // Get a prediction for the current video frame
@@ -200,7 +178,7 @@ function gotResult(error, results) {
         return;
     }
     // The results are in an array ordered by confidence.
-    // console.log(results[0]);
+    console.log(results[0]);
     label = results[0].label;
     // Classifiy again!
     classifyVideo();
