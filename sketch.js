@@ -178,10 +178,47 @@ function gotResult(error, results) {
         return;
     }
     // The results are in an array ordered by confidence.
-    console.log(results[0]);
+    // console.log(results[0]);
     label = results[0].label;
     // Classifiy again!
     classifyVideo();
+}
+
+keyPressed = () => {
+    console.log(keyCode);
+    if (keyCode == 81) {    //rock
+
+    }
+    if (keyCode == 87) {    //paper
+
+    }
+    if (keyCode == 69) {    //scissors
+
+    }
+
+    if (activeNote.type == 0) {
+        if (keyCode == 81) {
+            console.log("rock réussi!");
+        } else {
+            console.log("rock raté!");
+        }
+    }
+
+    if (activeNote.type == 1) {
+        if (keyCode == 87) {
+            console.log("paper réussi!");
+        } else {
+            console.log("paper raté!");
+        }
+    }
+
+    if (activeNote.type == 2) {
+        if (keyCode == 69) {
+            console.log("scissors réussi!");
+        } else {
+            console.log("scissors raté!");
+        }
+    }
 }
 
 //quand label == ce qu'on veut → incrémenter un counter
