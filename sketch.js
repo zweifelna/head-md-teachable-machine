@@ -83,7 +83,7 @@ function setup() {
 
     flippedVideo = ml5.flipImage(video)
     // Start classifying
-    // classifyVideo();
+    classifyVideo();
 }
 
 function draw() {
@@ -141,11 +141,6 @@ function draw() {
         messages.forEach((message) => {
             message.update();
         });
-    }
-
-    var canvases = document.getElementsByTagName("canvas");
-    for (i = 2; i < canvases.length - 5; i++) {
-        canvases[i].remove();
     }
 }
 
