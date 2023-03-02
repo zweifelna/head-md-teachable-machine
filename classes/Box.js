@@ -15,25 +15,25 @@ class Box {
     }
 
     grow() {
-        if (this.isGrowing) {
-            anime({
-                targets: this,
-                radius: this.maxRadius,
-                duration: 50,
-                easing: 'easeOutSine',
-                complete: () => {
-                    anime({
-                        targets: this,
-                        radius: this.minRadius,
-                        duration: 50,
-                        easing: 'easeOutSine',
-                        complete: () => {
-                            this.isGrowing = false;
-                        },
-                    });
-                },
-            });
-        }
+        // if (this.isGrowing) {
+        anime({
+            targets: this,
+            radius: this.maxRadius,
+            duration: 50,
+            easing: 'easeOutSine',
+            complete: () => {
+                anime({
+                    targets: this,
+                    radius: this.minRadius,
+                    duration: 50,
+                    easing: 'easeOutSine',
+                    complete: () => {
+                        this.isGrowing = false;
+                    },
+                });
+            },
+        });
     }
+    // }
 }
 
