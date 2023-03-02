@@ -13,6 +13,7 @@ let inGame = false;
 
 /*GAME*/
 // Box stuff
+let box;
 let boxCenter;
 let boxRadius = 200;
 
@@ -72,9 +73,10 @@ function setup() {
     /*GAME*/
     // Box
     boxCenter = createVector(width / 2, height * .65);
+    box = new Box();
 
     // Notes
-    offset = (width / 2 + noteRadius / 2) / noteSpeed;
+    offset = (width / 2 + noteRadius / 2 * 2) / noteSpeed;
 
     // Create video
     video = createCapture(VIDEO);
@@ -87,6 +89,7 @@ function setup() {
 }
 
 function draw() {
+    console.log(activeNote);
     if (isPlaying) {
         background(220);
 
@@ -101,20 +104,22 @@ function draw() {
 
         /*GAME*/
         // Box
-        fill(color(255, 255, 255));
-        square(boxCenter.x, boxCenter.y, boxRadius);
-        line(width / 2, 0, width / 2, height);
+        // fill(color(255, 255, 255));
+        // square(boxCenter.x, boxCenter.y, boxRadius);
+        box.show();
+        // box.grow();
 
         if (conductor !== undefined) {
             if (conductor.shouldSpawnNote()) {
                 let newNote = new Note({ speed: noteSpeed, radius: noteRadius });
                 notes.push(newNote);
+
+                // box.grow();
             }
         }
 
-        notes.forEach(note => {
-            // Update the note
-            note.update();
+        notes.forEach((note, i, object) => {
+
 
             // Set the active note
             if (activeNote == note) {
@@ -126,8 +131,14 @@ function draw() {
 
             // Check is note is out of screen
             if (note.position.x > width + note.radius) {
-                notes.shift();          // pourquoi stutter?
+                object.splice(i, 1)
+                // console.log("remved")
+                // console.log(notes.length)
+                // notes.shift();          // pourquoi stutter?
             }
+
+            // Update the note
+            note.update();
         });
 
         if (notes.length == 1) {
@@ -157,7 +168,7 @@ let start = () => {
         sound.play();
 
         // Start the conductor
-        conductor = new Conductor(70);
+        conductor = new Conductor(60);
         conductor.start(offset);
     }, 1000);
 }
@@ -191,11 +202,13 @@ function gotResult(error, results) {
 keyPressed = () => {
     // DEBUG
     // if (keyCode == 32) {
-    //     let newNote = new Note({ speed: noteSpeed, radius: noteRadius });
-    //     notes.push(newNote);
-    //     if (notes.length == 1) {
-    //         activeNote = notes[0];
-    //     }
+    //     // let newNote = new Note({ speed: noteSpeed, radius: noteRadius });
+    //     // notes.push(newNote);
+    //     // if (notes.length == 1) {
+    //     //     activeNote = notes[0];
+    //     // }
+
+    //     box.isGrowing = true;
     // }
 
     if (activeNote.type == 0) {
@@ -236,11 +249,14 @@ let successNote = (note) => {
         if (note.isInPerfectZone()) {
             let message = new Message("parfait!", note.position);
             messages.push(message);
+            note.hasMessage = true;
         } else if (note.isInOkZone()) {
             let message = new Message("ok~", note.position);
             messages.push(message);
+            note.hasMessage = true;
+        } else if (!note.isInOkZone() && !note.isInPerfectZone()) {
+            missedNote(note);
         }
-        note.hasMessage = true;
     }
 }
 
