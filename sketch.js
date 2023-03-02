@@ -13,7 +13,7 @@ let lastInput = 0;
 let rockCounter = 0;
 let paperCounter = 0;
 let scissorsCounter = 0;
-let threshold = 20;
+let threshold = 5;
 
 // Game state
 let isPlaying = false;
@@ -23,7 +23,7 @@ let inGame = false;
 // Box stuff
 let box;
 let boxCenter;
-let boxRadius = 200;
+let boxRadius = 225;
 
 // Notes stuff
 let offset;
@@ -40,7 +40,7 @@ let messages = [];
 let classifier;
 
 // Model URL
-let imageModelURL = 'https://teachablemachine.withgoogle.com/models/M2Z0uvmy7/';
+let imageModelURL = 'https://teachablemachine.withgoogle.com/models/dJxEHn2op/';
 
 // Video
 let video;
@@ -292,7 +292,7 @@ let successNote = (note) => {
 
 let handleInput = () => {
 
-    if (activeNote != undefined && millis() > lastInput + 750) {
+    if (activeNote != undefined && millis() > lastInput + 200) {
         if (activeNote.type == 0) {
             lastInput = millis();
             if (rockCounter > threshold) {
