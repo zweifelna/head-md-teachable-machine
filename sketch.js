@@ -23,9 +23,8 @@ const noteSpeed = 12;
 const noteRadius = 160;
 let activeNote;
 
-// Timer
-let countdown;
-let timer;
+// Messages
+let messages = [];
 
 // Classifier Variable
 let classifier;
@@ -39,8 +38,6 @@ let flippedVideo;
 
 // To store the classification
 let label = "";
-
-
 
 /*TITLE SCREEN*/
 // Start menu
@@ -79,14 +76,14 @@ function setup() {
     // Notes
     offset = (width / 2 + noteRadius / 2) / noteSpeed;
 
-    // Create the video
+    // Create video
     video = createCapture(VIDEO);
     video.size(320, 240);
     video.hide();
-    flippedVideo = ml5.flipImage(video)
 
+    flippedVideo = ml5.flipImage(video)
     // Start classifying
-    classifyVideo();
+    // classifyVideo();
 }
 
 function draw() {
@@ -116,16 +113,21 @@ function draw() {
         }
 
         notes.forEach(note => {
+            // Update the note
             note.update();
+
+            // Set the active note
             if (activeNote == note) {
                 note.isActive = true;
             } else {
                 note.isActive = false;
             }
 
-            // if (note.position.x > width + note.radius) {
-            //     notes.shift();          // pourquoi stutter?
-            // }
+
+            // Check is note is out of screen
+            if (note.position.x > width + note.radius) {
+                notes.shift();          // pourquoi stutter?
+            }
         });
 
         if (notes.length == 1) {
@@ -135,6 +137,15 @@ function draw() {
         if (notes.length > 0) {
             setActiveNote();
         }
+
+        messages.forEach((message) => {
+            message.update();
+        });
+    }
+
+    var canvases = document.getElementsByTagName("canvas");
+    for (i = 2; i < canvases.length - 5; i++) {
+        canvases[i].remove();
     }
 }
 
@@ -156,11 +167,10 @@ let start = () => {
     }, 1000);
 }
 
-
-
 let setActiveNote = () => {
     if (activeNote.position.x > boxCenter.x + boxRadius / 2 + noteRadius / 2) {
-        activeNote = notes[notes.indexOf(activeNote) + 1];
+        missedNote(activeNote);
+        if (notes[notes.indexOf(activeNote) + 1] !== undefined) activeNote = notes[notes.indexOf(activeNote) + 1];
     }
 }
 
@@ -185,39 +195,58 @@ function gotResult(error, results) {
 }
 
 keyPressed = () => {
-    console.log(keyCode);
-    if (keyCode == 81) {    //rock
-
-    }
-    if (keyCode == 87) {    //paper
-
-    }
-    if (keyCode == 69) {    //scissors
-
-    }
+    // DEBUG
+    // if (keyCode == 32) {
+    //     let newNote = new Note({ speed: noteSpeed, radius: noteRadius });
+    //     notes.push(newNote);
+    //     if (notes.length == 1) {
+    //         activeNote = notes[0];
+    //     }
+    // }
 
     if (activeNote.type == 0) {
         if (keyCode == 81) {
-            console.log("rock réussi!");
+            successNote(activeNote);
         } else {
-            console.log("rock raté!");
+            missedNote(activeNote);
         }
     }
 
     if (activeNote.type == 1) {
         if (keyCode == 87) {
-            console.log("paper réussi!");
+            successNote(activeNote);
         } else {
-            console.log("paper raté!");
+            missedNote(activeNote);
         }
     }
 
     if (activeNote.type == 2) {
         if (keyCode == 69) {
-            console.log("scissors réussi!");
+            successNote(activeNote);
         } else {
-            console.log("scissors raté!");
+            missedNote(activeNote);
         }
+    }
+}
+
+let missedNote = (note) => {
+    if (!note.hasMessage) {
+        let message = new Message("missed", note.position);
+        messages.push(message);
+        note.hasMessage = true;
+    }
+}
+
+let successNote = (note) => {
+    if (!note.hasMessage) {
+        if (note.isInPerfectZone()) {
+            let message = new Message("parfait!", note.position);
+            messages.push(message);
+        } else if (note.isInOkZone()) {
+            let message = new Message("ok~", note.position);
+            messages.push(message);
+        }
+        note.hasMessage = true;
     }
 }
 

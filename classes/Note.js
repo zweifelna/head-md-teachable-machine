@@ -5,6 +5,7 @@ class Note {
         this.radius = radius;
         this.type = Math.floor(Math.random() * 3);  //0 → pierre, 1 → feuille, 2 → ciseaux
         this.isActive = false;
+        this.hasMessage = false;
     }
 
     update() {
