@@ -1,7 +1,6 @@
 /*MISC*/
 // Things
 let sound;
-let conductor;
 
 let rock;
 let paper;
@@ -23,6 +22,7 @@ let notes = [];
 const noteSpeed = 12;
 const noteRadius = 160;
 let activeNote;
+let lastNote = 0;
 
 // Messages
 let messages = [];
@@ -46,11 +46,7 @@ let startButton;
 
 function preload() {
     classifier = ml5.imageClassifier(imageModelURL + 'model.json');
-    sound = new Howl({
-        src: ['./assets/margot.mp3'],
-        onend: function () { isPlaying = false; }
-    })
-
+    sound = loadSound('assets/margot.mp3')
     rock = loadImage('assets/rock.png');
     paper = loadImage('assets/paper.png');
     scissors = loadImage('assets/scissors.png');
@@ -89,7 +85,6 @@ function setup() {
 }
 
 function draw() {
-    console.log(activeNote);
     if (isPlaying) {
         background(220);
 
@@ -104,23 +99,16 @@ function draw() {
 
         /*GAME*/
         // Box
-        // fill(color(255, 255, 255));
-        // square(boxCenter.x, boxCenter.y, boxRadius);
         box.show();
-        // box.grow();
+        box.grow();
 
-        if (conductor !== undefined) {
-            if (conductor.shouldSpawnNote()) {
-                let newNote = new Note({ speed: noteSpeed, radius: noteRadius });
-                notes.push(newNote);
-
-                // box.grow();
-            }
+        if (millis() > lastNote + 1000) {
+            let newNote = new Note({ speed: noteSpeed, radius: noteRadius });
+            notes.push(newNote);
+            lastNote = millis();
         }
 
         notes.forEach((note, i, object) => {
-
-
             // Set the active note
             if (activeNote == note) {
                 note.isActive = true;
@@ -128,18 +116,21 @@ function draw() {
                 note.isActive = false;
             }
 
-
             // Check is note is out of screen
             if (note.position.x > width + note.radius) {
                 object.splice(i, 1)
-                // console.log("remved")
-                // console.log(notes.length)
-                // notes.shift();          // pourquoi stutter?
             }
 
             // Update the note
             note.update();
         });
+
+        if (activeNote !== undefined) {
+            if (activeNote.position.x > boxCenter.x - boxRadius / 4 && activeNote.noteTriggered == false) {
+                box.isGrowing = true;
+                activeNote.noteTriggered = true;
+            }
+        }
 
         if (notes.length == 1) {
             activeNote = notes[0];
@@ -166,10 +157,6 @@ let start = () => {
     setTimeout(() => {
         // Start the music
         sound.play();
-
-        // Start the conductor
-        conductor = new Conductor(60);
-        conductor.start(offset);
     }, 1000);
 }
 
