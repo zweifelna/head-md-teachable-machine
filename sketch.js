@@ -94,7 +94,7 @@ function draw() {
         background(220);
 
         // Draw the video
-        image(flippedVideo, 0, 0);
+        image(video, windowWidth/2, windowHeight/6);
 
         // Draw the label
         fill(0);
@@ -166,8 +166,8 @@ let setActiveNote = () => {
 
 // Get a prediction for the current video frame
 function classifyVideo() {
-    flippedVideo = ml5.flipImage(video)
-    classifier.classify(flippedVideo, gotResult);
+    //flippedVideo = ml5.flipImage(video)
+    classifier.classify(video, gotResult);
 }
 
 // When we get a result
@@ -178,7 +178,6 @@ function gotResult(error, results) {
         return;
     }
     // The results are in an array ordered by confidence.
-    console.log(results[0]);
     label = results[0].label;
     // Classifiy again!
     classifyVideo();
