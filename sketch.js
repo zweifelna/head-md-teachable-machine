@@ -7,11 +7,15 @@ let rock;
 let paper;
 let scissors;
 
+let number = 0;
+
+let lastInput = 0;
+
 // Counters
 let rockCounter = 0;
 let paperCounter = 0;
 let scissorsCounter = 0;
-let threshold = 50;
+let threshold = 20;
 
 // Game state
 let isPlaying = false;
@@ -63,6 +67,7 @@ function preload() {
 }
 
 function setup() {
+    lastInput = millis();
     createCanvas(windowWidth, windowHeight);
     rectMode(CENTER);
     ellipseMode(CENTER);
@@ -95,7 +100,6 @@ function setup() {
 }
 
 function draw() {
-    console.log(activeNote);
     if (isPlaying) {
         background(220);
 
@@ -110,28 +114,30 @@ function draw() {
 
         // when the label is recognised, increase
         // the counter
-        if (label === "Rock") {
-            rockCounter++;
-            
-        }
+        if (activeNote != undefined) {
+            if (label === "Rock") {
+                rockCounter++;
 
-        if (label === "Paper") {
-            paperCounter++;
-            
-        }
+            }
 
-        if (label === "Scissors") {
-            scissorsCounter++;
-            
-        }
+            if (label === "Paper") {
+                paperCounter++;
 
-        if (label === "Nothing") {
-            rockCounter = 0;
-            paperCounter = 0;
-            scissorsCounter = 0;
-            
+            }
+
+            if (label === "Scissors") {
+                scissorsCounter++;
+
+            }
+
+            if (label === "Nothing") {
+                rockCounter = 0;
+                paperCounter = 0;
+                scissorsCounter = 0;
+
+            }
         }
-        console.log("Paper : " + paperCounter);
+        // console.log("Paper : " + paperCounter);
         // console.log("Rock : " + rockCounter);
         // console.log("Scissors : " + scissorsCounter);
 
@@ -186,7 +192,7 @@ function draw() {
             message.update();
         });
 
-        if(notes.length > 0) handleInput();
+        if (notes.length > 0) handleInput();
     }
 }
 
@@ -296,15 +302,50 @@ let successNote = (note) => {
 }
 
 let handleInput = () => {
-    if (activeNote.type == 1) {
-        if (paperCounter > threshold) {
-            successNote(activeNote);
-            
-        } else if (paperCounter != 0) {
-            missedNote(activeNote);
+
+    if (activeNote != undefined && millis() > lastInput + 600) {
+        console.log("in if");
+        if (activeNote.type == 0) {
+            lastInput = millis();
+            if (rockCounter > threshold) {
+                successNote(activeNote);
+                rockCounter = 0;
+                paperCounter = 0;
+                scissorsCounter = 0;
+                
+            }
         }
-        
+        if (activeNote.type == 1) {
+            lastInput = millis();
+            if (paperCounter > threshold) {
+                successNote(activeNote);
+                rockCounter = 0;
+                paperCounter = 0;
+                scissorsCounter = 0;
+            }
+            // else {
+            //     missedNote(activeNote);
+            //     number++;
+            //     console.log("fail" + number);
+            // }
+        }
+        if (activeNote.type == 2) {
+            lastInput = millis();
+            if (scissorsCounter > threshold) {
+                successNote(activeNote);
+                rockCounter = 0;
+                paperCounter = 0;
+                scissorsCounter = 0;
+            }
+        }
     }
+
+    // } else {
+    //     missedNote(activeNote);
+    //     number++;
+    //     console.log("fail" + number);
+    // }
+
 }
 
 //quand label == ce qu'on veut → incrémenter un counter
