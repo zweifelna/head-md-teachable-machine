@@ -204,7 +204,7 @@ function draw() {
 
 
 
-        // if (notes.length > 0) handleInput(); // À DECOMMENTER!!!!!!
+        if (notes.length > 0) handleInput();
     }
 }
 
