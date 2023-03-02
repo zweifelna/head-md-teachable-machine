@@ -10,6 +10,7 @@ class Message {
 
     update() {
         textSize(32);
+        strokeWeight(1);
         fill(color(0, 0, 0, this.opacity));
         text(this.message, this.position.x, this.position.y - 150);
         // this.position += this.direction;

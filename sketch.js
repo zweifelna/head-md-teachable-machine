@@ -6,6 +6,8 @@ let rock;
 let paper;
 let scissors;
 
+let font;
+
 // Game state
 let isPlaying = false;
 let inGame = false;
@@ -47,6 +49,7 @@ let startButton;
 function preload() {
     classifier = ml5.imageClassifier(imageModelURL + 'model.json');
     sound = loadSound('assets/margot.mp3')
+    font = loadFont('assets/font.ttf');
     rock = loadImage('assets/rock.png');
     paper = loadImage('assets/paper.png');
     scissors = loadImage('assets/scissors.png');
@@ -58,6 +61,7 @@ function setup() {
     ellipseMode(CENTER);
     textAlign(CENTER);
     imageMode(CENTER);
+    textFont(font);
     frameRate(60);
 
     /*TITLE SCREEN*/
@@ -86,7 +90,7 @@ function setup() {
 
 function draw() {
     if (isPlaying) {
-        background(220);
+        background(255);
 
         // Draw the video
         image(video, windowWidth / 2, windowHeight / 6);
@@ -118,7 +122,7 @@ function draw() {
 
             // Check is note is out of screen
             if (note.position.x > width + note.radius) {
-                object.splice(i, 1)
+                note.display = false;
             }
 
             // Update the note

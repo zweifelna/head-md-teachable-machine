@@ -7,21 +7,25 @@ class Note {
         this.isActive = false;
         this.hasMessage = false;
         this.noteTriggered = false;
+        this.display = true;
     }
 
     update() {
+        if (!this.display) return;
         this.position.x += this.speed;
-        if (this.isActive) {
-            fill(color(255, 0, 0));
-        } else {
-            fill(color(255, 255, 255));
-        }
-        circle(this.position.x, this.position.y, this.radius);
+
+        //DEBUG
+        // if (this.isActive) {
+        //     fill(color(255, 0, 0));
+        // } else {
+        //     fill(color(255, 255, 255));
+        // }
+        // circle(this.position.x, this.position.y, this.radius);
 
         //resize image
-        rock.resize(this.radius, this.radius);
-        paper.resize(this.radius, this.radius);
-        scissors.resize(this.radius, this.radius);
+        rock.resize(this.radius * 1.5, this.radius * 1.5);
+        paper.resize(this.radius * 1.5, this.radius * 1.5);
+        scissors.resize(this.radius * 1.5, this.radius * 1.5);
 
         switch (this.type) {
             case 0:
