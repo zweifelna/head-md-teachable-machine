@@ -5,7 +5,7 @@ class Message {
         this.opacity = 255;
         this.width = 200;
         this.height = this.width;
-        this.position = new p5.Vector(width / 2 + boxRadius, boxCenter.y - boxRadius);
+        this.position = new p5.Vector(width / 2 + boxRadius, boxCenter.y - boxRadius / 2);
         this.missPosition = new p5.Vector(width / 2 + boxRadius / 1.75, boxCenter.y + boxRadius / 1.75);
 
     }
@@ -16,11 +16,11 @@ class Message {
         switch (this.type) {
             case 0: //perfect
                 image(perfect, this.position.x, this.position.y, this.width, this.height);
-                this.position = p5.Vector.add(this.position, new p5.Vector(1, -1));
+                this.position = p5.Vector.add(this.position, (new p5.Vector(10, -1)).normalize());
                 break;
             case 1: //ok
                 image(ok, this.position.x, this.position.y, this.width, this.height);
-                this.position = p5.Vector.add(this.position, new p5.Vector(1, -1));
+                this.position = p5.Vector.add(this.position, (new p5.Vector(10, -1)).normalize());
                 break;
             case 2: //miss
                 image(miss, this.missPosition.x, this.missPosition.y, this.width, this.height);
