@@ -3,7 +3,7 @@ class Note {
         this.position = createVector(-radius / 2, height * .65);
         this.speed = speed;
         this.radius = radius;
-        this.type = Math.floor(Math.random() * 3);  //0 → pierre, 1 → feuille, 2 → ciseaux
+        this.type = 1;//Math.floor(Math.random() * 3);  //0 → pierre, 1 → feuille, 2 → ciseaux
         this.isActive = false;
         this.hasMessage = false;
     }

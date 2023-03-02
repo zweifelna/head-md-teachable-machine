@@ -7,6 +7,12 @@ let rock;
 let paper;
 let scissors;
 
+// Counters
+let rockCounter = 0;
+let paperCounter = 0;
+let scissorsCounter = 0;
+let threshold = 50;
+
 // Game state
 let isPlaying = false;
 let inGame = false;
@@ -99,6 +105,33 @@ function draw() {
         textAlign(CENTER);
         text(label, width / 2, height - 4);
 
+        // when the label is recognised, increase
+        // the counter
+        if (label === "Rock") {
+            rockCounter++;
+            
+        }
+
+        if (label === "Paper") {
+            paperCounter++;
+            
+        }
+
+        if (label === "Scissors") {
+            scissorsCounter++;
+            
+        }
+
+        if (label === "Nothing") {
+            rockCounter = 0;
+            paperCounter = 0;
+            scissorsCounter = 0;
+            
+        }
+        console.log("Paper : " + paperCounter);
+        // console.log("Rock : " + rockCounter);
+        // console.log("Scissors : " + scissorsCounter);
+
         /*GAME*/
         // Box
         fill(color(255, 255, 255));
@@ -141,6 +174,8 @@ function draw() {
         messages.forEach((message) => {
             message.update();
         });
+
+        if(notes.length > 0) handleInput();
     }
 }
 
@@ -241,6 +276,18 @@ let successNote = (note) => {
             messages.push(message);
         }
         note.hasMessage = true;
+    }
+}
+
+let handleInput = () => {
+    if (activeNote.type == 1) {
+        if (paperCounter > threshold) {
+            successNote(activeNote);
+            
+        } else if (paperCounter != 0) {
+            missedNote(activeNote);
+        }
+        
     }
 }
 
