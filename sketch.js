@@ -36,6 +36,7 @@ const noteSpeed = 12;
 const noteRadius = 160;
 let activeNote;
 let lastNote = 0;
+let fft;
 
 // Messages
 let messages = [];
@@ -99,6 +100,7 @@ function setup() {
 
     // Notes
     offset = (width / 2 + noteRadius / 2 * 2) / noteSpeed;
+    fft = new p5.FFT();
 
     // Create video
     video = createCapture(VIDEO);
@@ -159,7 +161,10 @@ function draw() {
         box.show();
         // box.grow();
 
-        if (millis() > lastNote + 1000) {
+
+
+
+        if (millis() > lastNote + 1000 && millis() < 136616) {
             let newNote = new Note({ speed: noteSpeed, radius: noteRadius });
             notes.push(newNote);
             lastNote = millis();
@@ -202,7 +207,7 @@ function draw() {
             message.update();
         });
 
-
+        // console.log(fft.getEnergy("bass"));
 
         // if (notes.length > 0) handleInput(); // À DECOMMENTER!!!!!!
     }
@@ -250,15 +255,17 @@ function gotResult(error, results) {
 
 keyPressed = () => {
     // DEBUG
-    // if (keyCode == 32) {
-    //     // let newNote = new Note({ speed: noteSpeed, radius: noteRadius });
-    //     // notes.push(newNote);
-    //     // if (notes.length == 1) {
-    //     //     activeNote = notes[0];
-    //     // }
+    if (keyCode == 32) {
+        // let newNote = new Note({ speed: noteSpeed, radius: noteRadius });
+        // notes.push(newNote);
+        // if (notes.length == 1) {
+        //     activeNote = notes[0];
+        // }
 
-    //     box.isGrowing = true;
-    // }
+        // box.isGrowing = true;
+
+        console.log(millis());
+    }
 
     if (activeNote.type == 0) {
         if (keyCode == 81) {
