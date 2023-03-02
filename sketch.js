@@ -20,6 +20,10 @@ let isPlaying = false;
 let inGame = false;
 
 /*GAME*/
+// Score
+let score = 0;
+let scoreLabel;
+
 // Box stuff
 let box;
 let boxCenter;
@@ -79,6 +83,9 @@ function setup() {
     startButton.mousePressed(start);
 
     /*GAME*/
+    //Score
+    scoreLabel = new Score();
+
     // Box
     boxCenter = createVector(width / 2, height * .65);
     box = new Box();
@@ -100,45 +107,43 @@ function draw() {
     if (isPlaying) {
         background(255);
 
-        // Draw the video
-        image(video, windowWidth / 2, windowHeight / 6);
 
-        // Draw the label
+        /*VIDEO*/
+        // Draw the video
+        image(video, 200, 150);
+
+        // Draw the video label
         fill(0);
         textSize(16);
+        strokeWeight(1);
         textAlign(CENTER);
-        text(label, width / 2, height - 4);
+        text(label, 200, 300);
 
-        // when the label is recognised, increase
-        // the counter
+        // when the label is recognised, increase the counter
         if (activeNote != undefined) {
             if (label === "Rock") {
                 rockCounter++;
-
             }
 
             if (label === "Paper") {
                 paperCounter++;
-
             }
 
             if (label === "Scissors") {
                 scissorsCounter++;
-
             }
 
             if (label === "Nothing") {
                 rockCounter = 0;
                 paperCounter = 0;
                 scissorsCounter = 0;
-
             }
         }
-        // console.log("Paper : " + paperCounter);
-        // console.log("Rock : " + rockCounter);
-        // console.log("Scissors : " + scissorsCounter);
 
         /*GAME*/
+        // Score
+        scoreLabel.update();
+
         // Box
         box.show();
         box.grow();
@@ -280,10 +285,12 @@ let successNote = (note) => {
             let message = new Message("parfait!", note.position);
             messages.push(message);
             note.hasMessage = true;
+            increaseScore(3);
         } else if (note.isInOkZone()) {
             let message = new Message("ok~", note.position);
             messages.push(message);
             note.hasMessage = true;
+            increaseScore(1);
         } else if (!note.isInOkZone() && !note.isInPerfectZone()) {
             missedNote(note);
         }
@@ -322,7 +329,11 @@ let handleInput = () => {
             }
         }
     }
+}
 
+let increaseScore = (inc) => {
+    score += inc;
+    scoreLabel.grow();
 }
 
 //quand label == ce qu'on veut → incrémenter un counter
