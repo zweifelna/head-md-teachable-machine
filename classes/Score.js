@@ -9,7 +9,7 @@ class Score {
         fill(0);
         textSize(this.size);
         strokeWeight(1);
-        text(score, width - width * .05, height * .1);
+        text(score, width - width * .1, height * .1);
     }
 
     grow() {
