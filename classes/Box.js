@@ -1,12 +1,9 @@
 class Box {
     constructor() {
         this.minRadius = boxRadius;
-        this.maxRadius = this.minRadius * 1.5;
+        this.maxRadius = this.minRadius * 1.2;
         this.radius = this.minRadius;
-
         this.center = boxCenter;
-        // this.duration = 1000;
-        // this.startTime = null;
         this.isGrowing = false;
     }
 
@@ -14,19 +11,26 @@ class Box {
         noFill();
         stroke(255);
         square(this.center.x, this.center.y, this.radius);
+    }
 
-        if (!this.isGrowing) {
+    grow() {
+        if (this.isGrowing) {
             anime({
-                targets: this.radius,
-                translateX: [this.minRadius, this.maxRadius, this.minRadius], // from 100 to 250
-                delay: 200,
-                direction: 'alternate',
-                loop: false,
-                onended: () => {
-                    this.isGrowing = false;
-                }
+                targets: this,
+                radius: this.maxRadius,
+                duration: 50,
+                easing: 'easeOutSine',
+                complete: () => {
+                    anime({
+                        targets: this,
+                        radius: this.minRadius,
+                        duration: 50,
+                        complete: () => {
+                            this.isGrowing = false;
+                        },
+                    });
+                },
             });
-            // console.log('aled');
         }
     }
 }
