@@ -6,8 +6,6 @@ let rock;
 let paper;
 let scissors;
 
-let number = 0;
-
 let lastInput = 0;
 
 // Counters
@@ -291,8 +289,7 @@ let successNote = (note) => {
 
 let handleInput = () => {
 
-    if (activeNote != undefined && millis() > lastInput + 600) {
-        console.log("in if");
+    if (activeNote != undefined && millis() > lastInput + 750) {
         if (activeNote.type == 0) {
             lastInput = millis();
             if (rockCounter > threshold) {
@@ -311,11 +308,6 @@ let handleInput = () => {
                 paperCounter = 0;
                 scissorsCounter = 0;
             }
-            // else {
-            //     missedNote(activeNote);
-            //     number++;
-            //     console.log("fail" + number);
-            // }
         }
         if (activeNote.type == 2) {
             lastInput = millis();
@@ -327,12 +319,6 @@ let handleInput = () => {
             }
         }
     }
-
-    // } else {
-    //     missedNote(activeNote);
-    //     number++;
-    //     console.log("fail" + number);
-    // }
 
 }
 
