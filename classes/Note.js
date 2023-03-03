@@ -11,6 +11,8 @@ class Note {
         this.opacity = 255;
         this.maxSpriteSize = this.radius * 1.7;
         this.spriteSize = this.radius * 1.5;
+        this.comboMessage = false;
+        this.incMessage = false;
     }
 
     update() {

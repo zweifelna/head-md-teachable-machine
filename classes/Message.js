@@ -7,7 +7,6 @@ class Message {
         this.height = this.width;
         this.position = new p5.Vector(width / 2 + boxRadius, boxCenter.y - boxRadius / 2);
         this.missPosition = new p5.Vector(width / 2 + boxRadius / 1.75, boxCenter.y + boxRadius / 1.75);
-
     }
 
     update() {

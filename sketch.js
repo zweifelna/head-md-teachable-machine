@@ -314,7 +314,15 @@ let successNote = (note) => {
             setTimeout(() => {
                 gifToPlay = idleGif;
             }, 500);
-            increaseCombo();
+            if (note.comboMessage == false) {
+                increaseCombo();
+                note.comboMessage = true;
+                console.log('aaaaaaa');
+            }
+            if (note.incMessage == false) {
+                messages.push(new IncMessage(3 * combo))
+                note.incMessage = true;
+            }
         } else if (note.isInOkZone()) {
             let message = new Message(1, note.position);
             messages.push(message);
@@ -326,7 +334,11 @@ let successNote = (note) => {
             setTimeout(() => {
                 gifToPlay = idleGif;
             }, 500);
-            increaseCombo();
+            if (note.incMessage == false) {
+                messages.push(new IncMessage(1 * combo))
+                note.incMessage = true;
+            }
+            combo = 0;
         } else if (!note.isInOkZone() && !note.isInPerfectZone()) {
             missedNote(note);
         }
@@ -368,7 +380,7 @@ let handleInput = () => {
 }
 
 let increaseScore = (inc) => {
-    score += inc;
+    score += inc * combo;
     scoreLabel.grow();
 }
 
@@ -376,5 +388,8 @@ let increaseCombo = () => {
     combo++;
     if (combo > bestCombo) {
         bestCombo = combo;
+    }
+    if (combo > 1) {
+        messages.push(new ComboMessage(combo))
     }
 }
