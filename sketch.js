@@ -25,6 +25,9 @@ let isEndgame = false;
 let score = 0;
 let scoreLabel;
 
+let combo = 0;
+let bestCombo = 0;
+
 // Box stuff
 let box;
 let boxCenter;
@@ -59,6 +62,7 @@ let label = "";
 // Player
 let gifToPlay;
 let idleGif;
+let missGif;
 
 /*TITLE SCREEN*/
 // Start menu
@@ -79,6 +83,7 @@ function preload() {
     miss = loadImage('assets/miss.png');
     idleGif = loadGif('assets/player.gif');
     perfectGif = loadGif('assets/perfectGif.gif');
+    missGif = loadGif('assets/missGif.gif');
 }
 
 function setup() {
@@ -223,7 +228,7 @@ function draw() {
 
     if (millis() > 136616 + 4000) {  //136616 +
         //redirect to endgame.html
-        window.location.href = "endgame.html?score=" + score;
+        window.location.href = "endgame.html?score=" + score + "&combo=" + bestCombo;
     }
 }
 
@@ -288,6 +293,11 @@ let missedNote = (note) => {
         let message = new Message(2, note.position);
         messages.push(message);
         note.hasMessage = true;
+        combo = 0;
+        gifToPlay = missGif;
+        setTimeout(() => {
+            gifToPlay = idleGif;
+        }, 500);
     }
 }
 
@@ -304,6 +314,7 @@ let successNote = (note) => {
             setTimeout(() => {
                 gifToPlay = idleGif;
             }, 500);
+            increaseCombo();
         } else if (note.isInOkZone()) {
             let message = new Message(1, note.position);
             messages.push(message);
@@ -315,11 +326,14 @@ let successNote = (note) => {
             setTimeout(() => {
                 gifToPlay = idleGif;
             }, 500);
+            increaseCombo();
         } else if (!note.isInOkZone() && !note.isInPerfectZone()) {
             missedNote(note);
         }
     }
 }
+
+
 
 let handleInput = () => {
     if (activeNote != undefined && millis() > lastInput + 200) {
@@ -356,4 +370,11 @@ let handleInput = () => {
 let increaseScore = (inc) => {
     score += inc;
     scoreLabel.grow();
+}
+
+let increaseCombo = () => {
+    combo++;
+    if (combo > bestCombo) {
+        bestCombo = combo;
+    }
 }

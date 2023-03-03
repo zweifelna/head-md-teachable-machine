@@ -24,7 +24,6 @@
                 justify-content: center;
                 align-items: center;
                 height: 80vh;
-                width: 100%;
             }
 
             #container {
@@ -37,12 +36,22 @@
             }
 
             #scoreLabel {
-                margin-bottom: 3rem;
+                margin-bottom: 2rem;
                 font-size: 2rem;
             }
 
             #score {
                 font-size: 5rem;
+                margin-bottom: 2rem;
+            }
+
+            #comboLabel {
+                margin-bottom: 3rem;
+                font-size: 1rem;
+            }
+
+            #combo {
+                font-size: 1rem;
             }
 
             a {
@@ -58,16 +67,26 @@
         <div id="container">
             <div id="scoreLabel">YOUR SCORE</div>
             <div id="score"></div>
+
+            <div>
+                <span id="comboLabel">BEST STREAK : </span>
+                <span id="combo"></span>
+            </div>
+
             <a href="index.html">RESTART</a>
         </div>
         <script>
             const queryString = window.location.search;
             const urlParams = new URLSearchParams(queryString);
             const score = urlParams.get('score');
-            console.log(score);
+            const combo = urlParams.get('combo');
 
             let scoreNumber = document.getElementById("score");
             scoreNumber.innerHTML = score;
+
+            let comboNumber = document.getElementById("combo");
+            comboNumber.innerHTML = combo;
+
         </script>
     </body>
 
