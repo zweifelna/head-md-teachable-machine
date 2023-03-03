@@ -7,7 +7,7 @@
               content="IE=edge">
         <meta name="viewport"
               content="width=device-width, initial-scale=1.0">
-        <title>Satanic Scissors</title>
+        <title>Document</title>
 
         <style>
             @font-face {
@@ -24,47 +24,51 @@
                 justify-content: center;
                 align-items: center;
                 height: 80vh;
-                /* width: 100%; */
+                width: 100%;
             }
 
             #container {
-                /* width: 500px; */
-                height: 800px;
+                width: 500px;
+                height: 500px;
                 display: flex;
                 justify-content: center;
                 align-items: center;
                 flex-direction: column;
             }
 
+            #scoreLabel {
+                margin-bottom: 3rem;
+                font-size: 2rem;
+            }
+
+            #score {
+                font-size: 5rem;
+            }
+
             a {
                 margin-top: 3rem;
-                font-size: 2rem;
+                font-size: 1rem;
                 text-decoration: none;
                 color: black;
-            }
-
-            .ts {
-                width: 300px;
-                height: 100px;
-                background-color: red;
-            }
-
-            .cat {
-                width: 300px;
-                height: 100px;
-                background-color: blue;
             }
         </style>
     </head>
 
     <body>
         <div id="container">
-            <img src="./assets/titlescreen.jpg">
-            <img src="./assets/cat.gif">
-            <!-- <div class="ts"></div>
-            <div class="cat"></div> -->
-            <a href="game.html">PLAY</a>
+            <div id="scoreLabel">YOUR SCORE</div>
+            <div id="score"></div>
+            <a href="index.html">RESTART</a>
         </div>
+        <script>
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const score = urlParams.get('score');
+            console.log(score);
+
+            let scoreNumber = document.getElementById("score");
+            scoreNumber.innerHTML = score;
+        </script>
     </body>
 
 </html>

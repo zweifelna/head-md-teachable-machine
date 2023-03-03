@@ -15,7 +15,6 @@ class Box {
     }
 
     grow() {
-        // if (this.isGrowing) {
         anime({
             targets: this,
             radius: this.maxRadius,
@@ -34,6 +33,5 @@ class Box {
             },
         });
     }
-    // }
 }
 

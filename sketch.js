@@ -18,6 +18,7 @@ let threshold = 5;
 // Game state
 let isPlaying = false;
 let inGame = false;
+let isEndgame = false;
 
 /*GAME*/
 // Score
@@ -28,6 +29,7 @@ let scoreLabel;
 let box;
 let boxCenter;
 let boxRadius = 225;
+let boxShadows = [];
 
 // Notes stuff
 let offset;
@@ -55,11 +57,15 @@ let flippedVideo;
 let label = "";
 
 // Player
-let playerGif;
+let gifToPlay;
+let idleGif;
 
 /*TITLE SCREEN*/
 // Start menu
 let startButton;
+
+//restartButton
+let restartButton;
 
 function preload() {
     classifier = ml5.imageClassifier(imageModelURL + 'model.json');
@@ -71,7 +77,8 @@ function preload() {
     perfect = loadImage('assets/perfect.png');
     ok = loadImage('assets/ok.png');
     miss = loadImage('assets/miss.png');
-    playerGif = loadGif('assets/player.gif');
+    idleGif = loadGif('assets/player.gif');
+    perfectGif = loadGif('assets/perfectGif.gif');
 }
 
 function setup() {
@@ -84,13 +91,10 @@ function setup() {
     textFont(font);
     frameRate(60);
 
-    /*TITLE SCREEN*/
-    // Start button
-    startButton = createButton('Start');
-    startButton.position(windowWidth / 2, windowHeight / 2);
-    startButton.mousePressed(start);
-
     /*GAME*/
+    //Gif
+    gifToPlay = idleGif;
+
     //Score
     scoreLabel = new Score();
 
@@ -110,48 +114,54 @@ function setup() {
     flippedVideo = ml5.flipImage(video)
     // Start classifying
     classifyVideo();
+
+    setTimeout(() => {
+        // Start the music
+        sound.play();
+    }, 2250);
 }
 
 function draw() {
-    if (isPlaying) {
-        background(255);
+    background(255);
 
-        // GIF
-        tint(255, 255);
-        image(playerGif, width / 2, height / 3);
+    // GIF
+    tint(255, 255);
+    image(gifToPlay, width / 2, height / 3);
 
-        /*VIDEO*/
-        // Draw the video
-        tint(255);
-        image(video, 200, 150);
+    /*VIDEO*/
+    // Draw the video
+    tint(255);
+    image(video, 200, 150);
 
-        // Draw the video label
-        fill(0);
-        textSize(16);
-        strokeWeight(1);
-        textAlign(CENTER);
-        text(label, 200, 300);
+    // Draw the video label
+    fill(0);
+    textSize(16);
+    strokeWeight(1);
+    textAlign(CENTER);
+    text(label, 200, 300);
 
-        // when the label is recognised, increase the counter
-        if (activeNote != undefined) {
-            if (label === "Rock") {
-                rockCounter++;
-            }
-
-            if (label === "Paper") {
-                paperCounter++;
-            }
-
-            if (label === "Scissors") {
-                scissorsCounter++;
-            }
-
-            if (label === "Nothing") {
-                rockCounter = 0;
-                paperCounter = 0;
-                scissorsCounter = 0;
-            }
+    // when the label is recognised, increase the counter
+    if (activeNote != undefined) {
+        if (label === "Rock") {
+            rockCounter++;
         }
+
+        if (label === "Paper") {
+            paperCounter++;
+        }
+
+        if (label === "Scissors") {
+            scissorsCounter++;
+        }
+
+        if (label === "Nothing") {
+            rockCounter = 0;
+            paperCounter = 0;
+            scissorsCounter = 0;
+        }
+    }
+
+    if (sound.isPlaying()) {
 
         /*GAME*/
         // Score
@@ -159,17 +169,19 @@ function draw() {
 
         // Box
         box.show();
-        // box.grow();
 
-
-
-
+        // Spawn notes every 1 sec
         if (millis() > lastNote + 1000 && millis() < 136616) {
             let newNote = new Note({ speed: noteSpeed, radius: noteRadius });
             notes.push(newNote);
             lastNote = millis();
         }
 
+        boxShadows.forEach((shadow) => {
+            shadow.update();
+        });
+
+        // Update active note
         notes.forEach((note, i, object) => {
             // Set the active note
             if (activeNote == note) {
@@ -189,7 +201,6 @@ function draw() {
 
         if (activeNote !== undefined) {
             if (activeNote.position.x > boxCenter.x - boxRadius / 4 && activeNote.noteTriggered == false) {
-                // box.isGrowing = true;
                 box.grow();
                 activeNote.noteTriggered = true;
             }
@@ -206,25 +217,14 @@ function draw() {
         messages.forEach((message) => {
             message.update();
         });
-
-        // console.log(fft.getEnergy("bass"));
-
-        if (notes.length > 0) handleInput();
     }
-}
 
-let start = () => {
-    // Change game state
-    isPlaying = true;
+    // if (notes.length > 0) handleInput(); //!!!!!!!!!!!À DECOMMENTER!!!!!!!!!!!
 
-    // Destroy the startButton
-    startButton.remove();
-
-    // Wait 1 second then start the game
-    setTimeout(() => {
-        // Start the music
-        sound.play();
-    }, 1000);
+    if (millis() > 136616 + 4000) {  //136616 +
+        //redirect to endgame.html
+        window.location.href = "endgame.html?score=" + score;
+    }
 }
 
 let setActiveNote = () => {
@@ -236,7 +236,6 @@ let setActiveNote = () => {
 
 // Get a prediction for the current video frame
 function classifyVideo() {
-    //flippedVideo = ml5.flipImage(video)
     classifier.classify(video, gotResult);
 }
 
@@ -256,14 +255,6 @@ function gotResult(error, results) {
 keyPressed = () => {
     // DEBUG
     if (keyCode == 32) {
-        // let newNote = new Note({ speed: noteSpeed, radius: noteRadius });
-        // notes.push(newNote);
-        // if (notes.length == 1) {
-        //     activeNote = notes[0];
-        // }
-
-        // box.isGrowing = true;
-
         console.log(millis());
     }
 
@@ -308,12 +299,22 @@ let successNote = (note) => {
             note.hasMessage = true;
             increaseScore(3);
             note.scored();
+            boxShadows.push(new BoxShadow(boxCenter, boxRadius));
+            gifToPlay = perfectGif;
+            setTimeout(() => {
+                gifToPlay = idleGif;
+            }, 500);
         } else if (note.isInOkZone()) {
             let message = new Message(1, note.position);
             messages.push(message);
             note.hasMessage = true;
             increaseScore(1);
             note.scored();
+            boxShadows.push(new BoxShadow(boxCenter, boxRadius));
+            gifToPlay = perfectGif;
+            setTimeout(() => {
+                gifToPlay = idleGif;
+            }, 500);
         } else if (!note.isInOkZone() && !note.isInPerfectZone()) {
             missedNote(note);
         }
@@ -321,19 +322,17 @@ let successNote = (note) => {
 }
 
 let handleInput = () => {
-
     if (activeNote != undefined && millis() > lastInput + 200) {
-        if (activeNote.type == 0) {
+        if (activeNote.type == 2) {
             lastInput = millis();
             if (rockCounter > threshold) {
                 successNote(activeNote);
                 rockCounter = 0;
                 paperCounter = 0;
                 scissorsCounter = 0;
-
             }
         }
-        if (activeNote.type == 1) {
+        if (activeNote.type == 0) {
             lastInput = millis();
             if (paperCounter > threshold) {
                 successNote(activeNote);
@@ -342,7 +341,7 @@ let handleInput = () => {
                 scissorsCounter = 0;
             }
         }
-        if (activeNote.type == 2) {
+        if (activeNote.type == 1) {
             lastInput = millis();
             if (scissorsCounter > threshold) {
                 successNote(activeNote);
@@ -358,6 +357,3 @@ let increaseScore = (inc) => {
     score += inc;
     scoreLabel.grow();
 }
-
-//quand label == ce qu'on veut → incrémenter un counter
-//quand counter > counterthreshold → prendre en compte l'input + reset counter
